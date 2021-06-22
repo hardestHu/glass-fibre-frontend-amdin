@@ -1,0 +1,18 @@
+body,html{
+    width:100%;
+    margin:0;
+    padding:0;
+}
+ul{
+    padding:0;
+    margin:0;
+}
+ul li{
+    list-style-type:none;
+}
+.el-button.custom-btn{
+    background:linear-gradient(to right, #5C48AF, #5E8DF6)
+}
+.el-button.custom-btn:hover{
+    background:linear-gradient(to right, #5C48AF, #5E8DF6)
+}
