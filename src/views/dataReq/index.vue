@@ -222,8 +222,6 @@ export default {
           margin:20px 0;
         }
         .list-desc-special{
-          // border:1px solid #ccc;
-          // border-radius: 4px;
           font-size:16px;
           ul li{
             border-top:1px solid #ddd;

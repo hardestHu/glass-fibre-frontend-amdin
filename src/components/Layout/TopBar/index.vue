@@ -2,7 +2,7 @@
   <div class="top-bar">
     <el-menu class="menu-list" :default-active="activeIndex" mode="horizontal"
     background-color="#132C3B"
-     active-text-color="#409eff" text-color="#fff">
+     active-text-color="#409eff" text-color="#fff" @select="selectMenu">
         <el-menu-item v-for='(item,index) in routes' :key="index" :index="item.path">
             <router-link :to="item.path">{{item.meta.name}}</router-link>
         </el-menu-item>
@@ -27,7 +27,13 @@ export default {
         }
     },
     created(){
-        console.log(this.routes)
+        // console.log(this.routes)
+    },
+    methods:{
+        selectMenu(index){
+            this.activeIndex = index
+            console.log(index)
+        }
     }
 }
 </script>
@@ -50,6 +56,7 @@ export default {
         }
         a{
             text-decoration: none;
+            display: inline-block;
         }
     }
 </style>
