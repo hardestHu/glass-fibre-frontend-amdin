@@ -174,7 +174,7 @@
        
       </el-dialog>
 
-      <el-dialog title="上链进度" class="custom-dialog" :visible.sync="progressDialog" width="1200px">
+      <el-dialog title="上链进度" class="custom-dialog" :before-close="beforeCloseDialog" :visible.sync="progressDialog" width="1200px">
         
         <el-steps class="custom-step" :active="activeStep" align-center>
           <el-step title="上链前数据处理" >
@@ -184,12 +184,12 @@
               </div>
             </template> 
             <template slot="description">          
-              <div class="desc-date">2021-06-12 12:12:12</div>
-              <div class="desc-content">
+              <div class="desc-date">{{(activeStep >= 1) ? '2021-06-12 12:12:12':'待处理'}}</div>
+              <div class="desc-content" v-if="activeStep >= 1">
                 <i class="el-icon-circle-check"></i>
                 <span>记录打包</span>
               </div>
-              <div class="desc-content">
+              <div class="desc-content" v-if="activeStep >= 1">
                 <i class="el-icon-circle-check"></i>
                 <span>数字签名</span>
               </div>
@@ -202,12 +202,12 @@
               </div>
             </template> 
             <template slot="description">          
-              <div class="desc-date">2021-06-12 12:12:12</div>
-              <div class="desc-content">
+              <div class="desc-date">{{(activeStep >= 2) ? '2021-06-12 12:12:12':'待处理'}}</div>
+              <div class="desc-content" v-if="activeStep >= 2">
                 <i class="el-icon-circle-check"></i>
                 <span>节点广播</span>
               </div>
-              <div class="desc-content">
+              <div class="desc-content" v-if="activeStep >= 2">
                 <i class="el-icon-circle-check"></i>
                 <span>交易打包</span>
               </div>
@@ -220,12 +220,12 @@
               </div>
             </template> 
             <template slot="description">          
-              <div class="desc-date">2021-06-12 12:12:12</div>
-              <div class="desc-content">
+              <div class="desc-date">{{(activeStep >= 3) ? '2021-06-12 12:12:12':'待处理'}}</div>
+              <div class="desc-content" v-if="activeStep >= 3">
                 <i class="el-icon-circle-check"></i>
                 <span>共识处理</span>
               </div>
-              <div class="desc-content">
+              <div class="desc-content" v-if="activeStep >= 3">
                 <i class="el-icon-circle-check"></i>
                 <span>写入区块</span>
               </div>
@@ -238,8 +238,8 @@
               </div>
             </template> 
             <template slot="description">          
-              <div class="desc-date">{{isEnded ? '2021-06-21 12:12:12': '待处理'}}</div>
-              <div class="desc-content" v-if="isEnded">
+              <div class="desc-date">{{(activeStep >= 4) ? '2021-06-21 12:12:12': '待处理'}}</div>
+              <div class="desc-content" v-if="activeStep >= 4">
                 <i class="el-icon-circle-check"></i>
                 <span>合约处理</span>
               </div>
@@ -252,11 +252,11 @@
               </div>
             </template> 
             <template slot="description">          
-              <div class="desc-date">{{isEnded ? '2021-06-21 12:12:12': '待处理'}}</div>
+              <div class="desc-date">{{(activeStep >= 5) ? '2021-06-21 12:12:12': '待处理'}}</div>
             </template>
           </el-step>
         </el-steps>
-        <div class="content-list">
+        <div class="content-list" v-if="isEnded">
           <div class="list-item">
             <div class="list-title">
               存在记录
@@ -276,8 +276,8 @@
         </div>
 
         <div slot="footer">
-           <el-button @click="progressDialog = false">取 消</el-button>
-           <el-button type="primary" class="custom-btn" @click="progressDialog = false">确 定</el-button>
+           <el-button @click="beforeCloseDialog">取 消</el-button>
+           <el-button type="primary" class="custom-btn" @click="confirmDialog">确 定</el-button>
         </div>
       </el-dialog>
 
@@ -362,13 +362,12 @@ export default {
             detailHash:"shsjjiekjsljhjhdllaldjjfddkshjskkdhieils",
             areaHeight:452,
           }
-        ]
-
-
+        ],
+        timeCount:''
       }
     },
     created(){
-      for(let i=0; i<3; i++){
+      for(let i=0; i < 3; i++){
         this.tableData = this.tableData.concat(this.tableData)
       }
     },
@@ -387,13 +386,39 @@ export default {
         console.log(index)
         this.progressDialog = true;
         if((index % 2) === 0){
-          this.activeStep = 2;
+          this.activeStep = 0;
           this.isEnded = false;
+          this.timeCount = setInterval(() => {
+            if(this.activeStep === 3){
+              clearInterval(this.timeCount)
+            }else{
+              this.activeStep++;   
+            }
+          }, 1500);
         }else{
-          this.activeStep = 5;
-          this.isEnded = true;
+          this.activeStep = 0;
+         this.isEnded = false
+          this.timeCount = setInterval(() => {
+            if(this.activeStep === 5){
+              this.isEnded = true;
+              clearInterval(this.timeCount)
+            }else{
+              this.activeStep++;   
+            }
+          }, 1500);
         }
+      },
+      beforeCloseDialog(){
+        console.log(1)
+        this.progressDialog = false
+        clearInterval(this.timeCount)
+      },
+      confirmDialog(){
+        this.beforeCloseDialog()
       }
+    },
+    beforeDestroy(){
+      clearInterval(this.timeCount)
     }
 }
 </script>
@@ -424,6 +449,9 @@ export default {
       margin:10px 0;
     }
     .custom-dialog{
+      .el-dialog{
+        min-height: 400px;
+      }
       .el-dialog .el-dialog__header{
         background:linear-gradient(to right, #00152F, #0D3850);
         span{
